@@ -36,7 +36,7 @@ def draw_circle(frame, bbox, color, text):
     point2 = int(center[0] + rect_width), int(center[1] + axis1/2 + 25)
 
     cv2.rectangle(frame, point1, point2, color, -1)
-    cv2.putText(frame, text, (point1[0] + 5, point1[1] + 17), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    cv2.putText(frame, text, (point1[0] + 5, point1[1] + 17), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
 
 def draw_triangle(frame, bbox, color):
     triangle = np.array([
@@ -71,7 +71,12 @@ def draw_tracks(tracks, frames):
         for player in tracks["players"][frame_idx]:
             bbox = player["bbox"]
             track_id = player["track_id"]
-            draw_circle(frame, bbox, (0, 0, 0), f"{track_id}")
+            team_color = player["team_color"] if "team_color" in player else (0, 0, 0)
+            draw_circle(frame, bbox, team_color, f"{track_id}")
+
+            if player.get("has_ball", False):
+                print("I drew something")
+                draw_triangle(frame, bbox, (255, 0, 0))
         
         for ball in tracks["ball"][frame_idx]:
             bbox = ball["bbox"]

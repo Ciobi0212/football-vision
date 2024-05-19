@@ -1,6 +1,7 @@
 import datetime
 import supervision as sv
 import pickle
+import pandas as pd
 from ultralytics import YOLO
 
 class Tracker:
@@ -75,3 +76,19 @@ class Tracker:
             
         return tracks_dic
     
+    
+    def interpolate_ball_tracks(self, ball_tracks):
+        ball_bboxes = []
+        for frame_idx in range(len(ball_tracks)):
+            if len(ball_tracks[frame_idx]) == 0:
+                ball_bboxes.append([])
+            else:
+                ball_bboxes.append(ball_tracks[frame_idx][0]["bbox"])
+
+        pd_ball_tracks = pd.DataFrame(ball_bboxes, columns=["x1", "y1", "x2", "y2"])
+        pd_ball_tracks = pd_ball_tracks.interpolate(method='linear', limit_direction='both')
+        pd_ball_tracks = pd_ball_tracks.bfill()
+
+        ball_tracks = [[{"bbox": pd_ball_tracks.values[i], "track_id": 0}] for i in range(len(pd_ball_tracks))]
+        
+        return ball_tracks
