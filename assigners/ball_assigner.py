@@ -42,6 +42,28 @@ class BallAssigner:
 
             if best_fit_idx != -1:
                 self.player_tracks[frame_idx][best_fit_idx]['has_ball'] = True
+
+    def get_player_with_ball(self, player_tracks, frame_idx):
+        player_with_ball = None
+        for player in player_tracks[frame_idx]:
+            if player.get('has_ball', False):
+                player_with_ball = player
+                break
+
+        return player_with_ball
+    
+    def get_team_ball_possession(self, player_tracks):
+        possesion = []
+
+        for frame_idx in range(len(player_tracks)):
+            player_with_ball = self.get_player_with_ball(player_tracks, frame_idx)
+            if player_with_ball is not None:
+                team = player_with_ball['team']
+                possesion.append(team)
+            else:
+                possesion.append(-1)
+
+        return possesion
                 
 
     

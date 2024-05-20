@@ -55,6 +55,10 @@ class TeamAssigner:
         self.kmeans.fit(player_colors)
 
         print("Team colors: ", self.kmeans.cluster_centers_)
+        team_0_color = self.kmeans.cluster_centers_[0]
+        team_1_color = self.kmeans.cluster_centers_[1]
+
+        return team_0_color, team_1_color
 
     def get_team_dic(self):
         self.get_team_colors()
@@ -103,6 +107,13 @@ class TeamAssigner:
                 track_id = player['track_id']
                 if track_id in team_assignments[0]:
                     player['team_color'] = self.kmeans.cluster_centers_[0]
+                    player['team'] = 0
                 else:
                     player['team_color'] = self.kmeans.cluster_centers_[1]
+                    player['team'] = 1
+
+        team_0_color = self.kmeans.cluster_centers_[0]
+        team_1_color = self.kmeans.cluster_centers_[1]
+
+        return team_0_color, team_1_color
 

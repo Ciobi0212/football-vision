@@ -75,7 +75,6 @@ def draw_tracks(tracks, frames):
             draw_circle(frame, bbox, team_color, f"{track_id}")
 
             if player.get("has_ball", False):
-                print("I drew something")
                 draw_triangle(frame, bbox, (255, 0, 0))
         
         for ball in tracks["ball"][frame_idx]:
@@ -87,5 +86,57 @@ def draw_tracks(tracks, frames):
             bbox = referee["bbox"]
             track_id = referee["track_id"]
             draw_circle(frame, bbox, (255, 0, 0), "")
+
+    return frames
+
+def get_current_possession_percetanges(current_frames_idx, frames, possession):
+    possession_percentage = {
+        0: 0,
+        1: 0
+    }
+
+    possession_frames = 0
+
+    for frame_idx in range(current_frames_idx + 1):
+        if possession[frame_idx] != -1:
+            possession_percentage[possession[frame_idx]] += 1
+            possession_frames += 1
+
+    possession_percentage[0] = possession_percentage[0] / possession_frames * 100 if possession_frames > 0 else 0
+    possession_percentage[1] = possession_percentage[1] / possession_frames * 100 if possession_frames > 0 else 0
+
+    return possession_percentage
+
+def draw_ball_possession(frames, ball_possession, team_0_color, team_1_color):
+    for frame_idx in range(len(frames)):
+        current_possession = get_current_possession_percetanges(frame_idx, frames, ball_possession)
+        team_0_percentage = current_possession[0]
+        team_1_percentage = current_possession[1]
+        
+        frame_width = frames[frame_idx].shape[1]
+        frame_height = frames[frame_idx].shape[0]
+
+        bottom_left_corner1 = (0 + 40 , frame_height - 150)
+        bottom_left_corner2 = (0 + 40 , frame_height - 100)
+
+        overlay = frames[frame_idx].copy()
+
+        # Draw semi-transparent rectangle 
+        cv2.rectangle(overlay, (20, frame_height - 200), (430, frame_height - 50), (255, 255, 255), -1)
+
+        # Apply the overlay with a specified alpha value to create transparency
+        alpha = 0.55  # Transparency factor
+        cv2.addWeighted(overlay, alpha, frames[frame_idx], 1 - alpha, 0, frames[frame_idx])
+
+        cv2.putText(frames[frame_idx], "Ball Possession", (100, frame_height - 170), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
+         
+
+        # Draw team 0 possesion as a progress bar in the bottom left right corner
+        cv2.rectangle(frames[frame_idx], bottom_left_corner1, (int(40 + team_0_percentage * 3), frame_height - 120), team_0_color, -1)
+        cv2.putText(frames[frame_idx], f"{int(team_0_percentage)}%", (int(50 + team_0_percentage * 3), frame_height - 120), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2)
+        
+        # Draw team 1 possesion as a progress bar in the bottom left corner, above team 0
+        cv2.rectangle(frames[frame_idx], bottom_left_corner2, (int(40 + team_1_percentage * 3), frame_height - 70), team_1_color, -1)
+        cv2.putText(frames[frame_idx], f"{int(team_1_percentage)}%", (int(50 + team_1_percentage * 3), frame_height - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2)
 
     return frames
