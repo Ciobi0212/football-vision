@@ -1,7 +1,7 @@
 # football-vision
 
 ## Overview
-This mini-project leverages the power of YOLOv8 and OpenCV to process football video snippets, providing real-time player and ball tracking with insightful game analytics. Using machine learning algorithms such as KMeans clustering from scikit-learn, players are automatically recognized, tracked, and categorized based on their team's shirt color. Additionally, the project tracks the football throughout the game, providing live possession statistics and visual enhancements directly in the video stream.
+This mini-project leverages the power of YOLOv8 and OpenCV to process football video snippets, providing player and ball tracking with insightful game analytics. Using machine learning algorithms such as KMeans clustering from scikit-learn, players are automatically recognized, tracked, and categorized based on their team's shirt color. Additionally, the project tracks the football throughout the game, providing live possession statistics and visual enhancements directly in the video stream.
 
 ## Features
 - **Player and Ball Detection and Tracking:** Utilize YOLOv8 for cutting-edge object detection to identify and track players throughout the game.
